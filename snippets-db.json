@@ -1,0 +1,31 @@
+{
+  "vaultName": "CodeSnippet-Workbench-Vault",
+  "lastIndexedAt": "2026-06-29T13:28:00.653329Z",
+  "totalSnippets": 3,
+  "snippets": [
+    {
+      "id": "s-001",
+      "title": "Dev Stack",
+      "category": "docker",
+      "extension": "yml",
+      "fileName": "dev-stack.yml",
+      "rawCode": "version: '3.8'\n\nservices:\n  web:\n    image: node:18-alpine\n    container_name: workbench-web-dev\n    working_dir: /app\n    volumes:\n      - .:/app\n    ports:\n      - \"3000:3000\"\n    environment:\n      - NODE_ENV=development\n      - PORT=3000\n    command: npm run dev\n    depends_on:\n      - redis\n      - db\n\n  db:\n    image: postgres:15-alpine\n    container_name: workbench-db\n    environment:\n      POSTGRES_USER: devuser\n      POSTGRES_PASSWORD: devpassword\n      POSTGRES_DB: workbench_dev\n    ports:\n      - \"5432:5432\"\n    volumes:\n      - pgdata:/var/lib/postgresql/data\n\n  redis:\n    image: redis:7-alpine\n    container_name: workbench-redis\n    ports:\n      - \"6379:6379\"\n\nvolumes:\n  pgdata:\n    driver: local\n"
+    },
+    {
+      "id": "s-002",
+      "title": "Deploy Vercel",
+      "category": "scripts",
+      "extension": "sh",
+      "fileName": "deploy-vercel.sh",
+      "rawCode": "#!/bin/bash\n\n# Exit immediately if a command exits with a non-zero status\nset -e\n\necho \"🚀 Starting deployment prep for CodeSnippet-Workbench...\"\n\n# 1. Run local snippet indexer\necho \"📂 Running python snippets indexer...\"\nif command -v python3 &>/dev/null; then\n    python3 indexer/index-snippets.py\nelif command -v python &>/dev/null; then\n    python indexer/index-snippets.py\nelse\n    echo \"❌ Error: Python is not installed. Indexing aborted.\"\n    exit 1\nfi\n\n# 2. Check build output\nif [ ! -f \"snippets-db.json\" ]; then\n    echo \"❌ Error: snippets-db.json was not generated!\"\n    exit 1\nfi\necho \"✓ snippets-db.json generated successfully.\"\n\n# 3. Trigger Vercel deploy\necho \"⚡ Invoking Vercel CLI...\"\nif command -v vercel &>/dev/null; then\n    # Deploy to production and bypass confirmation\n    vercel --prod --yes\n    echo \"🎉 Deployment successfully pushed to Vercel!\"\nelse\n    echo \"⚠️ Warning: Vercel CLI not found. Please run 'npm i -g vercel' and deploy manually.\"\n    echo \"Static files are ready at root directory.\"\nfi\n"
+    },
+    {
+      "id": "s-003",
+      "title": "Tailwind Config",
+      "category": "web",
+      "extension": "js",
+      "fileName": "tailwind-config.js",
+      "rawCode": "/** @type {import('tailwindcss').Config} */\nmodule.exports = {\n  content: [\n    \"./src/**/*.{html,js,ts,jsx,tsx}\",\n    \"./index.html\"\n  ],\n  theme: {\n    extend: {\n      colors: {\n        brand: {\n          50: '#f5f3ff',\n          100: '#ede9fe',\n          500: '#8b5cf6',\n          900: '#4c1d95',\n        },\n        dark: {\n          bg: '#050506',\n          surface: '#09090b',\n          border: '#1e1e24'\n        }\n      },\n      fontFamily: {\n        sans: ['SF Pro Display', 'Apple-system', 'Segoe UI', 'sans-serif'],\n        mono: ['JetBrains Mono', 'Fira Code', 'monospace']\n      }\n    },\n  },\n  plugins: [],\n}\n"
+    }
+  ]
+}

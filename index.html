@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeSnippet-Workbench | Premium Local Cheat-Sheet Vault</title>
+    <meta name="description" content="A zero-dependency, local-first code fragment organizer and offline cheat-sheet workbench. Search and copy local developer snippets in milliseconds.">
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Highlight.js Stylesheet (Premium Dark Theme) -->
+    <link id="hljs-theme" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/tokyo-night-dark.min.css">
+    
+    <!-- Core Application Styling -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation Header -->
+        <header class="app-header">
+            <div class="brand-section">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="16 18 22 12 16 6"></polyline>
+                        <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="brand-title">CodeSnippet-Workbench</h1>
+                    <p class="brand-subtitle" id="vault-info">Loading snippets catalog...</p>
+                </div>
+            </div>
+            
+            <div class="header-actions">
+                <span class="status-badge online" id="status-badge">
+                    <span class="badge-dot"></span>
+                    <span class="badge-text">Local Engine</span>
+                </span>
+            </div>
+        </header>
+
+        <!-- Main Workbench Workspace -->
+        <main class="workbench-layout">
+            
+            <!-- 1. Left Sidebar: Categories Navigation Rail -->
+            <nav class="category-rail" id="category-rail" aria-label="Snippet Categories">
+                <div class="rail-header">
+                    <h2>Categories</h2>
+                </div>
+                <ul class="category-list" id="category-list">
+                    <!-- Categories injected here by app.js -->
+                    <li class="category-skeleton"></li>
+                    <li class="category-skeleton"></li>
+                    <li class="category-skeleton"></li>
+                </ul>
+                <div class="rail-footer">
+                    <div class="stats-panel">
+                        <div class="stats-row">
+                            <span class="stats-label">Snippets:</span>
+                            <span class="stats-value" id="stats-total-count">0</span>
+                        </div>
+                        <div class="stats-row">
+                            <span class="stats-label">Categories:</span>
+                            <span class="stats-value" id="stats-cat-count">0</span>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- 2. Middle Panel: Snippet search and stream -->
+            <section class="snippet-stream" aria-label="Snippet Search and List">
+                <div class="search-container">
+                    <div class="search-input-wrapper">
+                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input 
+                            type="search" 
+                            id="search-input" 
+                            placeholder="Fuzzy search title, code or extension..." 
+                            autocomplete="off"
+                            spellcheck="false"
+                            aria-label="Search snippets"
+                        >
+                    </div>
+                </div>
+
+                <div class="stream-content" id="snippet-list">
+                    <!-- Snippet list cards injected here by app.js -->
+                    <div class="card-skeleton"></div>
+                    <div class="card-skeleton"></div>
+                    <div class="card-skeleton"></div>
+                </div>
+            </section>
+
+            <!-- 3. Right Preview Area: Code Stage -->
+            <section class="code-preview-stage" aria-label="Code Preview Panel">
+                <div class="preview-header">
+                    <div class="active-snippet-meta">
+                        <h2 class="active-title" id="active-title">No snippet selected</h2>
+                        <div class="meta-badges">
+                            <span class="preview-badge" id="active-category" style="display:none;"></span>
+                            <span class="preview-badge ext" id="active-extension" style="display:none;"></span>
+                        </div>
+                    </div>
+                    <div class="preview-actions">
+                        <button class="action-btn copy-btn" id="copy-snippet-btn" aria-label="Copy snippet code" disabled>
+                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            <span class="btn-text">Copy Code</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="preview-body" id="preview-body">
+                    <div class="empty-state" id="empty-state">
+                        <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="4" width="20" height="16" rx="2" select="none"></rect>
+                            <path d="M10 4v16"></path>
+                            <path d="M2 10h8"></path>
+                            <path d="M2 14h8"></path>
+                        </svg>
+                        <p class="empty-text">Select a snippet from the list to view and copy the code.</p>
+                    </div>
+                    <div class="code-scroller" id="code-scroller" style="display:none;">
+                        <pre><code id="code-stage"></code></pre>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+        
+        <footer class="app-footer">
+            <span id="footer-sync-time">Database static: Not indexed yet</span>
+            <span>Zero-dependency static compiler • Host on Vercel/GitHub Pages</span>
+        </footer>
+    </div>
+
+    <!-- Load Highlight.js via CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <!-- Load Core Application Logic -->
+    <script src="app.js"></script>
+</body>
+</html>
